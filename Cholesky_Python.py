@@ -25,8 +25,8 @@ def condition(
       Checks if Matrix A is both positive definite and symmetric. 
       Multiplies both sides by the transpose of A if this condition is not met.
   """
-  print(f"Matrix A is {('' if symmetric else 'NOT')} Symmetric")
-  print(f"Matrix A is {('' if positive_definite else 'NOT')} Positive Definite")
+  print(f"Matrix A is{('' if symmetric else 'NOT')} Symmetric")
+  print(f"Matrix A is{('' if positive_definite else 'NOT')} Positive Definite")
   if symmetric and positive_definite:
     return (A,b)
   else:
@@ -113,6 +113,11 @@ def main():
 
   A, b = condition(symmetry, positive_definite, A, b)
 
+  print("Performing Cholesky Decomposition on Matrix A:\n"
+      + str(A) + "\n"
+      + "and Matrix b:\n"
+      + str(b))
+
   #Step 1: Matrix Factorization Phase
   U = Matrix_Factorization(N, A)
 
@@ -121,7 +126,7 @@ def main():
 
   #Step 3: Backward Solution Phase
   x = Backward_Sol(N, U, Y)
-  print(f"Cholesky Decomposition Result (x): {str(x)}")
+  print(f"Cholesky Decomposition Result (x): \n{str(x)}")
 
 # Run Cholesky Decomposition
 main()
