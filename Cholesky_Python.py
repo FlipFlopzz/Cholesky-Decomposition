@@ -7,20 +7,17 @@ def is_pos_def(A):
   return np.all(np.linalg.eigvals(A) > 0)
 
 def check_symmetry(A):
-  Atranspose = A.transpose()
-  if (A == Atranspose).all:
-    if (A == Atranspose).all():
-      print("Matrix A is Symmetric")
-      Symmetry = True
-    else:
-      print("Matrix A is NOT Symmetric")
-      Symmetry = False
-  else:
-    print("Matrix A is NOT Symmetric")
-    Symmetry = False
-  return Symmetry
+  return (A == A.transpose()).all()
 
 def condition(Symmetry,PositiveDefinite,A,b):
+  if Symmetry:
+    print("Matrix A is Symmetric")
+  else:
+    print("Matrix A is NOT Symmetric")
+  if PositiveDefinite:
+    print("Matrix A is Positive Definite")
+  else:
+    print("Matrix A is not Positive Definite")
   if Symmetry and PositiveDefinite:
     return (A,b)
   else:
@@ -50,7 +47,8 @@ def Matrix_Factorization(N,A):
  
 #Step 2: Calculate Y (U transpose * x) to go onto the next step
 def Forward_Sol(U,N,b):
-  Y = np.ndarray([N,1])
+  b = b.tolist()
+  Y = np.zeros([N,1])
   Utranspose = np.transpose(U)
   for irow in range(0,N):
     summation2 = 0
@@ -62,7 +60,7 @@ def Forward_Sol(U,N,b):
 
 #Step 3: Works backwards in relation to finding x as opposed to Y
 def Backward_Sol(N,U,Y):
-  x = np.ndarray([N,1])
+  x = np.zeros([N,1])
   for irow in range(N-1,-1,-1):
     summation3 = 0
     for e21 in range(irow,N):
@@ -85,7 +83,6 @@ b = np.asarray([
 ])
 #Step 0: Checking the Matrices
 PositiveDefinite = is_pos_def(A)
-print(PositiveDefinite)
 Symmetry = check_symmetry(A)
 SymPosDef = condition(Symmetry,PositiveDefinite,A,b)
 A = SymPosDef[0]
