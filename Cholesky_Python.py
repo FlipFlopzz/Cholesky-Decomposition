@@ -5,14 +5,12 @@ import numpy as np
 
 def is_pos_def(A: np.ndarray) -> bool:
   """ Check if a matrix is positive definite.
-
       Used in step 0 of Cholesky Decomposition
   """
   return np.all(np.linalg.eigvals(A) > 0)
 
 def check_symmetry(A: np.ndarray) -> bool:
   """ Check if a matrix is symmetric.
-
       Used in step 0 of Cholesky Decomposition
   """
   return (A == A.transpose()).all()
@@ -25,18 +23,17 @@ def condition(
       Checks if Matrix A is both positive definite and symmetric. 
       Multiplies both sides by the transpose of A if this condition is not met.
   """
-  print(f"Matrix A is{('' if symmetric else 'NOT')} Symmetric")
-  print(f"Matrix A is{('' if positive_definite else 'NOT')} Positive Definite")
+  print(f"Matrix A is{('' if symmetric else ' NOT')} Symmetric")
+  print(f"Matrix A is{('' if positive_definite else ' NOT')} Positive Definite")
   if symmetric and positive_definite:
     return (A,b)
   else:
     Atranspose = A.transpose()
-    SymPosDef = (Atranspose * A, Atranspose * b)
+    SymPosDef = (np.matmul(Atranspose, A), np.matmul(Atranspose, b))
     return SymPosDef
 
 def Matrix_Factorization(N: int, A: np.ndarray) -> np.ndarray:
   """ Performs Step 1 of Cholesky Decomposition.
-
       Calculates U (Upper Triangle) of Matrix A.
   """
   A = A.tolist()
@@ -59,7 +56,6 @@ def Matrix_Factorization(N: int, A: np.ndarray) -> np.ndarray:
 
 def Forward_Sol(U: np.ndarray, N: int, b: np.ndarray) -> np.ndarray:
   """ Performs Step 2 of Cholesky Decomposition.
-
       Calculates Y (Utranspose * x)
   """
   b = b.tolist()
@@ -77,7 +73,6 @@ def Forward_Sol(U: np.ndarray, N: int, b: np.ndarray) -> np.ndarray:
 
 def Backward_Sol(N: int, U: np.ndarray, Y: np.ndarray) -> np.ndarray:
   """ Performs Step 3 of Cholesky Decomposition.
-
       Calculates x by working backwards from Y
   """
   x = np.zeros([N,1])
@@ -91,20 +86,35 @@ def Backward_Sol(N: int, U: np.ndarray, Y: np.ndarray) -> np.ndarray:
   
   return x
 
+def Checking(A: np.ndarray, x: np.ndarray, b: np.ndarray, N: int):
+  """ Performs Step 4, an added step not part of Cholesky Decomposition.
+      Calculates the error in (A * x) - b to find if its correct or wrong
+  """
+  correct = np.subtract(np.matmul(A, x), b)
+  scalar = 0
+  for irow in range(0, N-1):
+    scalar = (scalar + correct[irow][0])**2
+
+  scalar = scalar**0.5
+  print("Absolute Error Norm = ", scalar)
+  return scalar
+
 def main():
   """ Performs Cholesky Decomposition
   """
   # Initialize variables
-  N = 3
+  N = 4
   A = np.asarray([
-      [2.00, -1.00, 0.00],
-      [-1.00, 2.00, -1.00],
-      [0.00, -1.00, 1.00]
+      [2.00, -1.00, 0.00, 5.00],
+      [-1.00, 2.00, -1.00, -3.00],
+      [0.00, -1.00, 1.00, 2.00],
+      [1.00, 2.00, 3.00, 4.00]
   ])
   b = np.asarray([
-      [1.00],
-      [0.00],
-      [0.00]
+      [-8.00],
+      [5.00],
+      [-4.00],
+      [-7.00]
   ])
 
   #Step 0: Checking the Matrices
@@ -127,6 +137,9 @@ def main():
   #Step 3: Backward Solution Phase
   x = Backward_Sol(N, U, Y)
   print(f"Cholesky Decomposition Result (x): \n{str(x)}")
+
+  #Step 4: Checking the answer
+  correct = Checking(A, x, b, N)
 
 # Run Cholesky Decomposition
 main()
